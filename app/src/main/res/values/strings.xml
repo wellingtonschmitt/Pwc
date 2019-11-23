@@ -6,5 +6,7 @@
     <string name="esqueceu_senha">Esqueceu a senha?</string>
     <string name="ainda_nao_tem_cadastro">Ainda não tem cadastro? Registre-se</string>
     <string name="registre_se"></string>
+    <string name="login_invalido">Login inválido!</string>
+    <string name="senha_invalido">Senha inválida!</string>
 
 </resources>
