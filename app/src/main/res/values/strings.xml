@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Pwc</string>
+    <string name="email">E-mail</string>
+    <string name="senha">Senha</string>
+    <string name="login">Login</string>
+    <string name="esqueceu_senha">Esqueceu a senha?</string>
+    <string name="ainda_nao_tem_cadastro">Ainda não tem cadastro? Registre-se</string>
+    <string name="registre_se"></string>
+
+</resources>
