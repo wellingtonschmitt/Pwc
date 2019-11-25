@@ -4,9 +4,10 @@
     <string name="senha">Senha</string>
     <string name="login">Login</string>
     <string name="esqueceu_senha">Esqueceu a senha?</string>
-    <string name="ainda_nao_tem_cadastro">Ainda não tem cadastro? Registre-se</string>
-    <string name="registre_se"></string>
+    <string name="ainda_nao_tem_cadastro">Ainda não tem cadastro?</string>
+    <string name="registre_se">Registre-se</string>
     <string name="login_invalido">Login inválido!</string>
     <string name="senha_invalido">Senha inválida!</string>
+    <string name="not_today">Not today</string>
 
 </resources>

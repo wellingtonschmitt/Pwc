@@ -2,8 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
     tools:context=".LoginActivity">
 
     <ImageView
@@ -48,7 +49,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-
         android:layout_marginTop="331dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
@@ -56,7 +56,7 @@
         android:hint="@string/senha"
         android:imeActionLabel="@string/login"
         android:imeOptions="actionDone"
-        android:inputType="textPassword"
+        android:inputType="textPassword|number"
         android:selectAllOnFocus="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,8 +83,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.131" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/esqueceuSenha"
@@ -103,7 +102,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/esqueceu_senha" />
+        android:text="@string/esqueceu_senha" />
 
     <TextView
         android:id="@+id/registreSe"
@@ -122,7 +121,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Ainda não tem cadastro? Registre-se" />
+        android:text="Ainda não tem cadastro? Registre-se" />
 
 
     <ProgressBar
@@ -152,7 +151,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="603dp"
         android:src="@drawable/ic_icon_menu_close_black"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
