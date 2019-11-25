@@ -9,5 +9,6 @@
     <string name="login_invalido">Login inválido!</string>
     <string name="senha_invalido">Senha inválida!</string>
     <string name="not_today">Not today</string>
+    <string name="sem_acesso">Ops.. Estamos sem acesso a internet?</string>
 
 </resources>

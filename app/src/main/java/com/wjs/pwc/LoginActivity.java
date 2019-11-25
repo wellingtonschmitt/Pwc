@@ -4,17 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +21,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +44,8 @@ public class LoginActivity extends AppCompatActivity {
 
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
-        final EditText username = findViewById(R.id.username);
-        final EditText password = findViewById(R.id.password);
+        final TextInputEditText username = findViewById(R.id.username);
+        final TextInputEditText password = findViewById(R.id.password);
         final TextView registreSe = findViewById(R.id.registreSe);
 
         String strCad = getString(R.string.ainda_nao_tem_cadastro);
@@ -49,8 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         strCad = strCad + " " + strReg;
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(strCad);
         spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.pumpkin_orange)),
-                strCad.length() - strReg.length() - 1, strCad.length(), 18);
-        spannableStringBuilder.setSpan(new RelativeSizeSpan(1.0F), strCad.length() - strReg.length() - 1, strCad.length(), 33);
+                strCad.length() - strReg.length() - 1, strCad.length(), 0);
         registreSe.setText(spannableStringBuilder);
         registreSe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,17 +68,22 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        username.addTextChangedListener(new LoginDataTextWatcher(loginButton,username,password));
-        password.addTextChangedListener(new LoginDataTextWatcher(loginButton,username,password));
+        username.addTextChangedListener(new LoginDataTextWatcher(loginButton, username, password));
+        password.addTextChangedListener(new LoginDataTextWatcher(loginButton, username, password));
 
-        loginButton.setOnClickListener(new LoginClickListener(this,username,password));
+        loginButton.setOnClickListener(new LoginClickListener(this, username, password));
         password.setOnEditorActionListener(new PasswordActionListener(loginButton));
-        //TODO
-        //requestPermission();
+
+        requestPermission();
     }
 
-    void showNotToday(){
-        Toast.makeText(LoginActivity.this,R.string.not_today,Toast.LENGTH_SHORT).show();
+    void showNotToday() {
+        Toast.makeText(LoginActivity.this, R.string.not_today, Toast.LENGTH_SHORT).show();
+    }
+
+    void startEnquete() {
+        finish();
+        startActivity(new Intent(LoginActivity.this, EnqueteActivity.class));
     }
 
     //region [perms]
@@ -139,32 +147,28 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private class LoginDataTextWatcher implements TextWatcher{
+    private class LoginDataTextWatcher implements TextWatcher {
 
-        private WeakReference<EditText> username;
-        private WeakReference<EditText> password;
+        private WeakReference<TextInputEditText> username;
+        private WeakReference<TextInputEditText> password;
         private WeakReference<Button> login;
 
-        public LoginDataTextWatcher(final Button login, final EditText username, final EditText password) {
+        public LoginDataTextWatcher(final Button login, final TextInputEditText username, final TextInputEditText password) {
             this.login = new WeakReference<>(login);
             this.username = new WeakReference<>(username);
             this.password = new WeakReference<>(password);
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
         @Override
         public void afterTextChanged(Editable s) {
-            final EditText usernameEditText = username.get();
-            final EditText passwordEditText = password.get();
+            final TextInputEditText usernameEditText = username.get();
+            final TextInputEditText passwordEditText = password.get();
             final Button loginBtn = login.get();
             if (loginBtn == null || usernameEditText == null || passwordEditText == null)
                 return;
@@ -176,10 +180,10 @@ public class LoginActivity extends AppCompatActivity {
     private class LoginClickListener implements View.OnClickListener {
 
         private WeakReference<Activity> activity;
-        private WeakReference<EditText> username;
-        private WeakReference<EditText> password;
+        private WeakReference<TextInputEditText> username;
+        private WeakReference<TextInputEditText> password;
 
-        public LoginClickListener(final Activity activity, final EditText username, final EditText password) {
+        public LoginClickListener(final Activity activity, final TextInputEditText username, final TextInputEditText password) {
             this.activity = new WeakReference<>(activity);
             this.username = new WeakReference<>(username);
             this.password = new WeakReference<>(password);
@@ -188,8 +192,8 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final Activity activity = this.activity.get();
-            final EditText usernameEditText = username.get();
-            final EditText passwordEditText = password.get();
+            final TextInputEditText usernameEditText = username.get();
+            final TextInputEditText passwordEditText = password.get();
             if (activity == null || usernameEditText == null || passwordEditText == null)
                 return;
             boolean hasError = false;
@@ -202,13 +206,67 @@ public class LoginActivity extends AppCompatActivity {
                 passwordEditText.setError(getString(R.string.senha_invalido));
             }
             if (!hasError) {
-                setResult(Activity.RESULT_OK);
-                //Complete and destroy login activity once successful
-                finish();
-                startActivity(new Intent(activity, EnqueteActivity.class));
+                new LoginTask((Button) activity.findViewById(R.id.login),
+                        (ProgressBar) activity.findViewById(R.id.loading)).execute();
             }
         }
     }
 
+    private class LoginTask extends AsyncTask<Void, Void, Void> {
+        private Button loginButton;
+        private ProgressBar loadingProgressBar;
 
+        public LoginTask(final Button loginButton, final ProgressBar loadingProgressBar) {
+            this.loginButton = loginButton;
+            this.loadingProgressBar = loadingProgressBar;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (loginButton != null)
+                loginButton.setVisibility(View.GONE);
+            if (loadingProgressBar != null) {
+                loadingProgressBar.setVisibility(View.VISIBLE);
+            }
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                int timeoutMs = 1500;
+                Socket sock = new Socket();
+                SocketAddress sockaddr = new InetSocketAddress("abacomm.com.br", 443);
+
+                sock.connect(sockaddr, timeoutMs);
+                sock.close();
+
+                setResult(Activity.RESULT_OK);
+                //Complete and destroy login activity once successful
+                startEnquete();
+
+            } catch (IOException e) {
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(LoginActivity.this, getString(R.string.sem_acesso), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            if (loginButton != null)
+                loginButton.setVisibility(View.VISIBLE);
+            if (loadingProgressBar != null) {
+                loadingProgressBar.setVisibility(View.GONE);
+            }
+        }
+
+    }
 }
